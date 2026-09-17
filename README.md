@@ -1,27 +1,33 @@
-# MultiUAV Task Planner Starter
+# UAV Task
 
-该目录作为 `zhangsheng93/MultiUAV-Plat` 的独立任务规划扩展，完成以下功能：
+该仓库是独立的无人机任务聚合与资源分配项目。它承接前端任务规划输出，将任务组分配给 C172 和 SF50 两类飞行平台，并输出供航迹规划模块使用的飞机任务包。
 
-1. 将前级任务分解结果读取为结构化原子任务。
-2. 对明确标记为可去重的任务执行重复消除。
-3. 通过硬约束检查和贪心层次聚合形成任务包。
-4. 使用 OR-Tools CP-SAT 完成任务包与无人机分配。
-5. 输出供后续航迹规划模块使用的 JSON 执行方案。
+当前实现完成以下功能：
 
-## 1. 放入 MultiUAV-Plat
+1. 承接前端任务规划输出和任务聚合输出。
+2. 将 `VISIBLE`、`INFRARED`、`RADAR` 映射到虚拟载荷能力。
+3. 检查任务依赖、高度范围、飞行能力、载荷和剩余任务时长。
+4. 使用 OR-Tools CP-SAT 完成任务组与飞机分配。
+5. 在没有 OR-Tools 的开发环境中使用确定性回退求解，并在结果中明确标记。
+6. 输出主任务飞机和可用备份飞机，不强制占用整个舰队。
+7. 通过适配器生成供现有航迹规划模块消费的任务包。
 
-```bash
-git clone https://github.com/zhangsheng93/MultiUAV-Plat.git
-cd MultiUAV-Plat
-git checkout -b feature/task-aggregation
+## 1. 代码结构
 
-cp -r /path/to/multiuav_task_planner_starter/mission_planner .
-cp -r /path/to/multiuav_task_planner_starter/examples .
-cp -r /path/to/multiuav_task_planner_starter/tests/test_planner.py tests_task_planner.py
-cp /path/to/multiuav_task_planner_starter/requirements.txt requirements_planner.txt
+```text
+mission_planner/
+├── schemas.py
+├── normalize.py
+├── capability_model.py
+├── dependency_validator.py
+├── candidate_filter.py
+├── cp_sat_allocator.py
+├── mission_allocator.py
+├── mission_cli.py
+└── multiuav_adapter.py
 ```
 
-也可以直接把整个目录放在仓库旁边独立运行。
+旧版 `AtomicTask`、`MissionPackage`、`UAV` 和原有聚合接口继续保留，用于兼容仓库中的既有示例和测试。
 
 ## 2. 安装
 
@@ -38,15 +44,31 @@ Windows PowerShell 使用：
 .venv\Scripts\Activate.ps1
 ```
 
-## 3. 离线运行
+## 3. 运行前端输出到资源分配
 
 ```bash
-python -m mission_planner.cli   --tasks examples/tasks.json   --uavs examples/uavs.json   --output outputs/plan.json
+python -m mission_planner.mission_cli \
+  --request examples/recon_allocation_request.json \
+  --output outputs/recon_allocation.json
 ```
 
-## 4. 读取 MultiUAV-Plat 实时无人机状态
+示例结果中，G01 被分配给一架 C172，其余飞机保留为 `AVAILABLE_RESERVE`。SF50 在该示例中因未配置 `LOITER` 仿真能力而被筛除。
 
-先启动 MultiUAV-Plat server：
+`T00` 通过 `completed_task_ids` 标记为已完成。删除该字段后，G01 将返回 `BLOCKED`，用于验证前端任务依赖没有被聚合过程丢失。
+
+## 4. 输入输出边界
+
+资源分配接口的输入包含三份快照：
+
+1. 前端任务规划输出。
+2. 任务聚合输出。
+3. 舰队状态和载荷配置。
+
+资源分配接口输出 `assignments` 和 `reserve_aircraft`。每个任务组保存任务顺序、目标区域、载荷标识、飞行能力和时间范围。航迹点生成、飞行控制指令和 X-Plane 执行由下游模块处理。
+
+## 5. 读取 MultiUAV-Plat 实时飞机状态
+
+先启动原有服务端：
 
 ```bash
 cd /path/to/MultiUAV-Plat/server
@@ -54,50 +76,51 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-再执行规划：
+再使用旧版实时状态适配器：
 
 ```bash
-python -m mission_planner.cli   --tasks examples/tasks.json   --server http://127.0.0.1:8000   --capability-profiles examples/uav_capabilities.json   --output outputs/plan.json
+python -m mission_planner.cli \
+  --tasks examples/tasks.json \
+  --server http://127.0.0.1:8000 \
+  --capability-profiles examples/uav_capabilities.json \
+  --output outputs/plan.json
 ```
 
-`GET /drones` 提供位置、电量、速度和状态。能力载荷暂由
-`uav_capabilities.json` 补充，算法稳定后再扩展服务端 Drone 模型。
+`GET /drones` 提供动态平台状态。分配模块需要由能力配置补充 `model`、`flight_capabilities` 和 `installed_payloads`。当前 C172 和 SF50 性能参数来自项目提供的 X-Plane 飞行手册，平台与虚拟载荷的兼容关系属于 `SIMULATION_PROFILE`，没有标记为真实改装结论。
 
-## 5. 测试
+## 6. 测试
 
 ```bash
 pytest -q
 ```
 
-## 6. 当前模型边界
+在没有安装 OR-Tools 的环境中，旧版分配接口和新接口都使用确定性回退求解。安装 `requirements.txt` 后，新接口使用 CP-SAT。
 
-- 一个任务包由一架无人机执行。
-- 同一无人机可以接收多个任务包。
-- 包内任务时序由前置依赖保存，详细开始时间和跨包路径由航迹规划模块处理。
-- CP-SAT 只处理能力、电量、工作时长和分配代价。
-- 多无人机联合执行同一任务、通信拓扑和在线重规划属于后续扩展。
+## 7. 当前模型边界
 
+- 一个任务组由一架飞机执行。
+- 同一飞机可以接收多个时间上不冲突的任务组。
+- 当前资源分配使用任务组的估计工作量，精确转场时间和燃油代价由航迹规划模块回传后加入。
+- 通信链路的静态设备知识保留扩展位置，当前示例验证载荷和飞行能力。
+- 多机协同执行同一任务、链路带宽竞争和在线重分配属于后续扩展。
 
-## 7. 一键生成汇报文件
+## 8. 旧版聚合与分配示例
 
-Linux 或 macOS：
+```bash
+python -m mission_planner.cli \
+  --tasks examples/tasks.json \
+  --uavs examples/uavs.json \
+  --output outputs/plan.json
+```
+
+Linux 或 macOS 可以使用：
 
 ```bash
 bash run_demo.sh
 ```
 
-Windows：
+Windows 可以使用：
 
 ```bat
 run_demo.bat
 ```
-
-生成：
-
-```text
-outputs/plan.json
-outputs/report.html
-```
-
-`outputs/sample_report.html` 是结构演示文件，其求解状态标记为 `ILLUSTRATIVE`。
-正式汇报应使用实际运行生成的 `outputs/report.html`。

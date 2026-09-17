@@ -1,0 +1,22 @@
+{
+  "mission_id": "M001",
+  "aggregation_version": 1,
+  "task_groups": [
+    {
+      "group_id": "G01",
+      "member_task_ids": ["T01", "T02"],
+      "group_type": "AREA_OBSERVATION",
+      "target_area_ids": ["AREA-B", "AREA-C"],
+      "combined_priority": 2,
+      "required_payloads": ["VISIBLE"],
+      "required_capabilities": ["LOITER"],
+      "estimated_workload_sec": 180,
+      "aggregation_reason": "区域相邻、时间窗口兼容、载荷要求一致",
+      "depends_on_groups": []
+    }
+  ],
+  "unmerged_tasks": [],
+  "conflicts": [],
+  "warnings": [],
+  "status": "READY_FOR_ALLOCATION"
+}

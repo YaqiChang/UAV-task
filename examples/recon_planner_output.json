@@ -1,0 +1,50 @@
+{
+  "mission_id": "M001",
+  "plan_version": 1,
+  "context_version": 3,
+  "tasks": [
+    {
+      "task_id": "T00",
+      "task_type": "PREPARE",
+      "target_area_id": "BASE",
+      "duration_sec": 1,
+      "priority": 1,
+      "time_window": {"start": 0, "end": null},
+      "required_payloads": [],
+      "required_capabilities": [],
+      "depends_on": []
+    },
+    {
+      "task_id": "T01",
+      "task_type": "OBSERVE",
+      "target_area_id": "AREA-B",
+      "duration_sec": 60,
+      "priority": 2,
+      "time_window": {"start": null, "end": null},
+      "required_payloads": ["VISIBLE"],
+      "required_capabilities": ["LOITER"],
+      "depends_on": ["T00"],
+      "constraints": {"min_altitude_m": 500, "max_altitude_m": 1000}
+    },
+    {
+      "task_id": "T02",
+      "task_type": "OBSERVE",
+      "target_area_id": "AREA-C",
+      "duration_sec": 120,
+      "priority": 2,
+      "time_window": {"start": null, "end": null},
+      "required_payloads": ["VISIBLE"],
+      "required_capabilities": ["LOITER"],
+      "depends_on": []
+    }
+  ],
+  "scenario_context": {
+    "map_id": "EPCE-EXPANDED",
+    "weather_version": 1,
+    "constraint_version": 2
+  },
+  "fleet_capability_summary": {
+    "available_aircraft": 10,
+    "payload_types": ["VISIBLE", "INFRARED", "RADAR"]
+  }
+}

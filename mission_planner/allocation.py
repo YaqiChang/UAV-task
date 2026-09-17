@@ -3,7 +3,10 @@ from __future__ import annotations
 from math import ceil
 from typing import Dict, List, Sequence, Tuple
 
-from ortools.sat.python import cp_model
+try:
+    from ortools.sat.python import cp_model
+except ImportError:  # pragma: no cover - depends on the runtime environment
+    cp_model = None
 
 from .domain import MissionPackage, UAV
 
@@ -91,6 +94,9 @@ def allocate_packages(
     CP-SAT jointly enforces capability eligibility, battery-adjusted cumulative
     energy, cumulative work time, package time windows and package precedence.
     """
+    if cp_model is None:
+        return _allocate_packages_greedy(packages, uavs, energy_per_meter)
+
     model = cp_model.CpModel()
     variables: Dict[Tuple[int, int], cp_model.IntVar] = {}
     starts: Dict[int, cp_model.IntVar] = {}
@@ -233,3 +239,102 @@ def allocate_packages(
         "wall_time_s": solver.wall_time,
     }
     return assignments, metadata
+
+
+def _allocate_packages_greedy(
+    packages: Sequence[MissionPackage],
+    uavs: Sequence[UAV],
+    energy_per_meter: float,
+) -> Tuple[List[Dict], Dict]:
+    """Deterministic fallback used when OR-Tools is not installed."""
+    used_energy = {uav.id: 0 for uav in uavs}
+    used_work = {uav.id: 0 for uav in uavs}
+    next_start = {uav.id: 0 for uav in uavs}
+    assignment_by_uav = {uav.id: [] for uav in uavs}
+    uav_by_id = {uav.id: uav for uav in uavs}
+
+    for package in sorted(packages, key=lambda item: (-item.priority, item.id)):
+        candidates = []
+        for uav in uavs:
+            if not _feasible(uav, package, energy_per_meter):
+                continue
+            required_energy, required_work_s, travel_time_s = _resource_usage(
+                uav, package, energy_per_meter
+            )
+            if used_energy[uav.id] + required_energy > uav.usable_energy:
+                continue
+            if used_work[uav.id] + required_work_s > uav.max_work_s:
+                continue
+            start = max(package.earliest_start_s, next_start[uav.id])
+            if start + package.duration_s > package.latest_finish_s:
+                continue
+            candidates.append(
+                (
+                    _assignment_cost(uav, package, energy_per_meter),
+                    uav.id,
+                    required_energy,
+                    required_work_s,
+                    travel_time_s,
+                    start,
+                )
+            )
+        if not candidates:
+            raise RuntimeError(
+                f"No feasible allocation for package {package.id} without OR-Tools"
+            )
+        _, uav_id, required_energy, required_work_s, travel_time_s, start = min(candidates)
+        end = start + package.duration_s
+        used_energy[uav_id] += required_energy
+        used_work[uav_id] += required_work_s
+        next_start[uav_id] = end
+        assignment_by_uav[uav_id].append(
+            {
+                "package_id": package.id,
+                "task_ids": _ordered_task_ids(package),
+                "actions": sorted(package.actions),
+                "required_capabilities": sorted(package.capabilities),
+                "start_time_s": start,
+                "end_time_s": end,
+                "travel_time_s": travel_time_s,
+                "required_energy": required_energy,
+                "required_work_s": required_work_s,
+                "estimated_cost": _assignment_cost(
+                    uav_by_id[uav_id], package, energy_per_meter
+                ),
+            }
+        )
+
+    assignments = []
+    for uav in uavs:
+        assigned_packages = sorted(
+            assignment_by_uav[uav.id],
+            key=lambda item: (item["start_time_s"], item["package_id"]),
+        )
+        assignments.append(
+            {
+                "uav_id": uav.id,
+                "packages": assigned_packages,
+                "task_sequence": [
+                    task_id
+                    for package in assigned_packages
+                    for task_id in package["task_ids"]
+                ],
+                "total_service_time_s": sum(
+                    package["end_time_s"] - package["start_time_s"]
+                    for package in assigned_packages
+                ),
+                "total_work_time_s": sum(
+                    package["required_work_s"] for package in assigned_packages
+                ),
+                "total_energy": sum(
+                    package["required_energy"] for package in assigned_packages
+                ),
+                "usable_energy": uav.usable_energy,
+            }
+        )
+    return assignments, {
+        "solver_status": "FEASIBLE",
+        "solver_name": "deterministic_greedy_fallback",
+        "objective_value": None,
+        "wall_time_s": 0.0,
+    }

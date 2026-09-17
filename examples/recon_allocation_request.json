@@ -1,0 +1,81 @@
+{
+  "completed_task_ids": ["T00"],
+  "planner_output": {
+    "mission_id": "M001",
+    "plan_version": 1,
+    "context_version": 3,
+    "tasks": [
+      {
+        "task_id": "T00",
+        "task_type": "PREPARE",
+        "target_area_id": "BASE",
+        "duration_sec": 1,
+        "priority": 1,
+        "time_window": {"start": 0, "end": null},
+        "required_payloads": [],
+        "required_capabilities": [],
+        "depends_on": []
+      },
+      {
+        "task_id": "T01",
+        "task_type": "OBSERVE",
+        "target_area_id": "AREA-B",
+        "duration_sec": 60,
+        "priority": 2,
+        "time_window": {"start": null, "end": null},
+        "required_payloads": ["VISIBLE"],
+        "required_capabilities": ["LOITER"],
+        "depends_on": ["T00"],
+        "constraints": {"min_altitude_m": 500, "max_altitude_m": 1000}
+      },
+      {
+        "task_id": "T02",
+        "task_type": "OBSERVE",
+        "target_area_id": "AREA-C",
+        "duration_sec": 120,
+        "priority": 2,
+        "time_window": {"start": null, "end": null},
+        "required_payloads": ["VISIBLE"],
+        "required_capabilities": ["LOITER"],
+        "depends_on": []
+      }
+    ]
+  },
+  "aggregation_output": {
+    "mission_id": "M001",
+    "aggregation_version": 1,
+    "task_groups": [
+      {
+        "group_id": "G01",
+        "member_task_ids": ["T01", "T02"],
+        "group_type": "AREA_OBSERVATION",
+        "target_area_ids": ["AREA-B", "AREA-C"],
+        "combined_priority": 2,
+        "required_payloads": ["VISIBLE"],
+        "required_capabilities": ["LOITER"],
+        "estimated_workload_sec": 180,
+        "aggregation_reason": "区域相邻、时间窗口兼容、载荷要求一致",
+        "depends_on_groups": []
+      }
+    ],
+    "unmerged_tasks": [],
+    "conflicts": [],
+    "warnings": [],
+    "status": "READY_FOR_ALLOCATION"
+  },
+  "fleet_snapshot": {
+    "fleet_snapshot_version": 7,
+    "aircraft": [
+      {"aircraft_id": "C172-01", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "C172-02", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "C172-03", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "C172-04", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "C172-05", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "SF50-01", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "SF50-02", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "SF50-03", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "SF50-04", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+      {"aircraft_id": "SF50-05", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true}
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "fleet_snapshot_version": 7,
+  "aircraft": [
+    {"aircraft_id": "C172-01", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "C172-02", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "C172-03", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "C172-04", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "C172-05", "model": "C172", "installed_payloads": ["payload.wescam_mx15"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "SF50-01", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "SF50-02", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "SF50-03", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "SF50-04", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true},
+    {"aircraft_id": "SF50-05", "model": "SF50", "installed_payloads": ["payload.wescam_mx15", "payload.lynx_mmr"], "remaining_endurance_sec": 3600, "max_work_sec": 3600, "available": true}
+  ]
+}
