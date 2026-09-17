@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-UAV Task Aggregation Report</title>
+<style>
+:root {
+  --bg: #f7f8fa;
+  --card: #ffffff;
+  --text: #172033;
+  --muted: #667085;
+  --line: #d8dee8;
+  --accent: #356ae6;
+  --soft: #edf3ff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px;
+}
+h1 { margin: 0 0 8px; font-size: 28px; }
+h2 { margin: 0 0 16px; font-size: 20px; }
+.muted { color: var(--muted); font-size: 13px; }
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 22px 0;
+}
+.metric {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+}
+.metric-value { font-size: 26px; font-weight: 700; margin-top: 8px; }
+.section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+}
+.flow {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr 80px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+.node {
+  min-height: 110px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+.node strong { display: block; margin-bottom: 8px; }
+.arrow {
+  text-align: center;
+  color: var(--accent);
+  font-size: 28px;
+}
+.uav-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.uav-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+}
+.uav-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.package {
+  margin-top: 12px;
+  border-left: 4px solid var(--accent);
+  background: var(--soft);
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+.package-title { font-weight: 700; margin-bottom: 4px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table-scroll { overflow-x: auto; }
+th, td {
+  border-bottom: 1px solid var(--line);
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+th { color: var(--muted); font-size: 13px; }
+ul { margin: 0; padding-left: 20px; }
+li { margin: 8px 0; }
+.footer {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 12px;
+}
+@media (max-width: 800px) {
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flow { grid-template-columns: 1fr; }
+  .arrow { transform: rotate(90deg); }
+  .uav-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>多无人机任务聚合与资源分配结果</h1>
+  <div class="muted">离线任务规划演示报告</div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="muted">原子任务数</div>
+      <div class="metric-value">4</div>
+    </div>
+    <div class="metric">
+      <div class="muted">任务包数</div>
+      <div class="metric-value">2</div>
+    </div>
+    <div class="metric">
+      <div class="muted">无人机数</div>
+      <div class="metric-value">2</div>
+    </div>
+    <div class="metric">
+      <div class="muted">求解状态</div>
+      <div class="metric-value">OPTIMAL</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <h2>算法链路</h2>
+    <div class="flow">
+      <div class="node">
+        <strong>原子任务输入</strong>
+        <div class="muted">动作、区域、目标、时间窗、能力需求、前置依赖</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node">
+        <strong>约束任务聚合</strong>
+        <div class="muted">受控重复消除、全包空间距离、时间窗、单机能力、能源与包大小复检</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node">
+        <strong>CP-SAT 资源分配</strong>
+        <div class="muted">恰好一次分配、能力、电量、累计能源、保留能源、工作时长与优先级</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>无人机执行方案</h2>
+    <div class="uav-grid">
+      
+            <section class="uav-card">
+              <div class="uav-title">UAV-1</div>
+              <div class="muted">任务序列：T1 → T3</div>
+              <div class="muted">服务 420 s；工作 449 s；能源 456 / 1200</div>
+              
+                <div class="package">
+                  <div class="package-title">P1</div>
+                  <div>search → track</div>
+                  <div class="muted">T1, T3</div>
+                </div>
+                
+            </section>
+            
+            <section class="uav-card">
+              <div class="uav-title">UAV-2</div>
+              <div class="muted">任务序列：T4</div>
+              <div class="muted">服务 300 s；工作 333 s；能源 332 / 1050</div>
+              
+                <div class="package">
+                  <div class="package-title">P2</div>
+                  <div>relay</div>
+                  <div class="muted">T4</div>
+                </div>
+                
+            </section>
+            
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>任务包明细</h2>
+    <div class="table-scroll"><table>
+      <thead>
+        <tr>
+          <th>任务包</th>
+          <th>任务序列</th>
+          <th>能力需求</th>
+          <th>持续时间</th>
+          <th>分配无人机</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+            <tr>
+              <td>P1</td>
+              <td>search → track<br><span class='muted'>T1, T3</span></td>
+              <td>eo, tracking</td>
+              <td>420 s</td>
+              <td>UAV-1</td>
+            </tr>
+            
+            <tr>
+              <td>P2</td>
+              <td>relay<br><span class='muted'>T4</span></td>
+              <td>relay</td>
+              <td>300 s</td>
+              <td>UAV-2</td>
+            </tr>
+            
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="section">
+    <h2>原子任务明细（去重后）</h2>
+    <div class="table-scroll"><table>
+      <thead>
+        <tr>
+          <th>ID</th><th>任务包</th><th>动作</th><th>区域</th><th>坐标</th>
+          <th>持续时间</th><th>能力</th><th>前置任务</th><th>目标</th>
+          <th>时间窗</th><th>优先级</th><th>合并策略</th>
+        </tr>
+      </thead>
+      <tbody>
+                <tr>
+                  <td>T1</td>
+                  <td>P1</td>
+                  <td>search</td>
+                  <td>A</td>
+                  <td>[505.0, 497.5]</td>
+                  <td>180 s</td>
+                  <td>eo</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>[0, 900]</td>
+                  <td>3</td>
+                  <td>deduplicate</td>
+                </tr>
+                
+                <tr>
+                  <td>T3</td>
+                  <td>P1</td>
+                  <td>track</td>
+                  <td>A</td>
+                  <td>[520.0, 500.0]</td>
+                  <td>240 s</td>
+                  <td>eo, tracking</td>
+                  <td>T1</td>
+                  <td>target-1</td>
+                  <td>[180, 1200]</td>
+                  <td>5</td>
+                  <td>bundle_only</td>
+                </tr>
+                
+                <tr>
+                  <td>T4</td>
+                  <td>P2</td>
+                  <td>relay</td>
+                  <td>A</td>
+                  <td>[480.0, 520.0]</td>
+                  <td>300 s</td>
+                  <td>relay</td>
+                  <td>T3</td>
+                  <td>target-1</td>
+                  <td>[180, 1200]</td>
+                  <td>4</td>
+                  <td>bundle_only</td>
+                </tr>
+                </tbody>
+    </table></div>
+  </section>
+
+  <section class="section">
+    <h2>聚合过程</h2>
+    <ul>
+      <li><strong>deduplicate</strong> T1, T2 → T1</li><li><strong>bundle</strong> T1, T3 → P1, score=0.7824</li>
+    </ul>
+  </section>
+
+  <div class="footer">
+    Objective value: 11580.0；
+    Wall time: 0.006307829 s
+  </div>
+</main>
+</body>
+</html>

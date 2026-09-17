@@ -1,0 +1,19 @@
+{
+  "UAV-1": {
+    "capabilities": [
+      "eo",
+      "tracking"
+    ],
+    "energy_budget": 1500,
+    "reserve_energy": 150,
+    "max_work_s": 1200
+  },
+  "UAV-2": {
+    "capabilities": [
+      "relay"
+    ],
+    "energy_budget": 1500,
+    "reserve_energy": 150,
+    "max_work_s": 1200
+  }
+}

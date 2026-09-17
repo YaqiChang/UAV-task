@@ -1,0 +1,83 @@
+[
+  {
+    "id": "T1",
+    "action": "search",
+    "region_id": "A",
+    "position": [
+      500,
+      500
+    ],
+    "duration_s": 180,
+    "required_capabilities": [
+      "eo"
+    ],
+    "predecessors": [],
+    "target_id": null,
+    "earliest_start_s": 0,
+    "latest_finish_s": 900,
+    "priority": 3,
+    "merge_policy": "deduplicate"
+  },
+  {
+    "id": "T2",
+    "action": "search",
+    "region_id": "A",
+    "position": [
+      510,
+      495
+    ],
+    "duration_s": 180,
+    "required_capabilities": [
+      "eo"
+    ],
+    "predecessors": [],
+    "target_id": null,
+    "earliest_start_s": 0,
+    "latest_finish_s": 900,
+    "priority": 3,
+    "merge_policy": "deduplicate"
+  },
+  {
+    "id": "T3",
+    "action": "track",
+    "region_id": "A",
+    "position": [
+      520,
+      500
+    ],
+    "duration_s": 240,
+    "required_capabilities": [
+      "eo",
+      "tracking"
+    ],
+    "predecessors": [
+      "T1"
+    ],
+    "target_id": "target-1",
+    "earliest_start_s": 180,
+    "latest_finish_s": 1200,
+    "priority": 5,
+    "merge_policy": "bundle_only"
+  },
+  {
+    "id": "T4",
+    "action": "relay",
+    "region_id": "A",
+    "position": [
+      480,
+      520
+    ],
+    "duration_s": 300,
+    "required_capabilities": [
+      "relay"
+    ],
+    "predecessors": [
+      "T3"
+    ],
+    "target_id": "target-1",
+    "earliest_start_s": 180,
+    "latest_finish_s": 1200,
+    "priority": 4,
+    "merge_policy": "bundle_only"
+  }
+]

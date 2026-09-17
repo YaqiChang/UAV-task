@@ -1,0 +1,33 @@
+[
+  {
+    "id": "UAV-1",
+    "position": [
+      0,
+      0
+    ],
+    "max_speed_mps": 25,
+    "battery_percent": 90,
+    "capabilities": [
+      "eo",
+      "tracking"
+    ],
+    "energy_budget": 1500,
+    "reserve_energy": 150,
+    "max_work_s": 1200
+  },
+  {
+    "id": "UAV-2",
+    "position": [
+      100,
+      0
+    ],
+    "max_speed_mps": 20,
+    "battery_percent": 80,
+    "capabilities": [
+      "relay"
+    ],
+    "energy_budget": 1500,
+    "reserve_energy": 150,
+    "max_work_s": 1200
+  }
+]

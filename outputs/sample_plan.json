@@ -1,0 +1,117 @@
+{
+  "input_task_count": 4,
+  "package_count": 2,
+  "packages": [
+    {
+      "id": "P1",
+      "task_ids": [
+        "T1+T2",
+        "T3"
+      ],
+      "actions": [
+        "search",
+        "track"
+      ],
+      "region_ids": [
+        "A"
+      ],
+      "target_ids": [
+        "target-1"
+      ],
+      "required_capabilities": [
+        "eo",
+        "tracking"
+      ],
+      "duration_s": 420,
+      "priority": 5,
+      "centroid": [
+        510.0,
+        500.0
+      ]
+    },
+    {
+      "id": "P2",
+      "task_ids": [
+        "T4"
+      ],
+      "actions": [
+        "relay"
+      ],
+      "region_ids": [
+        "A"
+      ],
+      "target_ids": [
+        "target-1"
+      ],
+      "required_capabilities": [
+        "relay"
+      ],
+      "duration_s": 300,
+      "priority": 4,
+      "centroid": [
+        480.0,
+        520.0
+      ]
+    }
+  ],
+  "assignments": [
+    {
+      "uav_id": "UAV-1",
+      "packages": [
+        {
+          "package_id": "P1",
+          "task_ids": [
+            "T1+T2",
+            "T3"
+          ],
+          "actions": [
+            "search",
+            "track"
+          ],
+          "estimated_cost": 232
+        }
+      ],
+      "total_service_time_s": 420
+    },
+    {
+      "uav_id": "UAV-2",
+      "packages": [
+        {
+          "package_id": "P2",
+          "task_ids": [
+            "T4"
+          ],
+          "actions": [
+            "relay"
+          ],
+          "estimated_cost": 260
+        }
+      ],
+      "total_service_time_s": 300
+    }
+  ],
+  "aggregation_trace": [
+    {
+      "operation": "deduplicate",
+      "source_task_ids": [
+        "T1",
+        "T2"
+      ],
+      "result_task_id": "T1+T2"
+    },
+    {
+      "operation": "bundle",
+      "source_task_ids": [
+        "T1+T2",
+        "T3"
+      ],
+      "result_package_id": "P1",
+      "score": 0.78
+    }
+  ],
+  "solver": {
+    "solver_status": "ILLUSTRATIVE",
+    "objective_value": 492,
+    "wall_time_s": 0.01
+  }
+}

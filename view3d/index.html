@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <title>MultiUAV-Plat 3D Viewer</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="topbar-title">
+          <strong id="appTitle">MultiUAV-Plat 3D Viewer</strong>
+          <span id="sessionName" class="muted">Waiting for backend state</span>
+        </div>
+        <div class="topbar-actions">
+          <button id="languageToggle">中文</button>
+          <button id="cameraFit">Fit</button>
+          <button id="cameraTop">Top</button>
+          <button id="cameraFollow">Follow</button>
+          <button id="cameraRoam">Roam</button>
+          <select id="screenshotFormat" title="Screenshot Format">
+            <option value="png">PNG</option>
+            <option value="jpg">JPG</option>
+            <option value="svg">SVG</option>
+            <option value="pdf">PDF</option>
+            <option value="eps">EPS</option>
+          </select>
+          <button id="screenshotButton">Capture</button>
+          <button id="cheatSheetToggle" aria-expanded="false" aria-controls="cheatSheetPanel">CheatSheet</button>
+          <button id="infoToggle">Info</button>
+        </div>
+      </header>
+      <section id="cheatSheetPanel" class="cheat-sheet" aria-label="Keyboard Shortcuts">
+        <div class="cheat-sheet-header">
+          <h2 id="cheatSheetTitle">Keyboard Shortcuts</h2>
+          <button id="closeCheatSheet" title="Close Shortcuts">×</button>
+        </div>
+        <div class="shortcut-list">
+          <div class="shortcut-row">
+            <kbd>Esc</kbd>
+            <span id="cheatClear">Clear selection</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>↑ ↓ ← →</kbd>
+            <span id="cheatPan">Pan view</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>1</kbd>
+            <span id="cheatCameraFit">Fit all</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>2</kbd>
+            <span id="cheatCameraTop">Top view</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>3</kbd>
+            <span id="cheatCameraFollow">Follow view</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>4</kbd>
+            <span id="cheatCameraRoam">Roam path</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>. / ,</kbd>
+            <span id="cheatRoamSpeed">Roam speed up / down</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>+ / -</kbd>
+            <span id="cheatZoom">Zoom in / out</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>R</kbd>
+            <span id="cheatReset">Reset view</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>L</kbd>
+            <span id="cheatLabels">Show / hide labels</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>M</kbd>
+            <span id="cheatMinimap">Show / hide minimap</span>
+          </div>
+          <div class="shortcut-row">
+            <kbd>I</kbd>
+            <span id="cheatInfo">Show / hide info panel</span>
+          </div>
+        </div>
+      </section>
+      <main class="workspace">
+        <section id="sceneHost" class="scene-host">
+          <div class="map-overlay" id="miniMapPanel">
+            <canvas id="miniMapCanvas" width="220" height="160"></canvas>
+          </div>
+          <div class="nav-overlay" aria-label="View Navigation">
+            <label class="zoom-rail" title="Quick zoom">
+              <input id="quickZoomScale" type="range" min="40" max="500" value="100" orient="vertical" />
+            </label>
+            <button id="panUp" title="Pan View Up">↑</button>
+            <button id="panLeft" title="Pan View Left">←</button>
+            <button id="resetView" title="Reset View">⟳</button>
+            <button id="panRight" title="Pan View Right">→</button>
+            <button id="panDown" title="Pan View Down">↓</button>
+          </div>
+        </section>
+        <aside class="side-panel">
+          <div class="info-drawer-header">
+            <h2 id="selectionTitle">No Selection</h2>
+            <button id="closeInfo" title="Close Details">×</button>
+          </div>
+          <div id="selectionDetails" class="details">Click a drone, target, or obstacle to view details.</div>
+        </aside>
+      </main>
+      <footer class="timeline">
+        <button id="liveToggle">Live</button>
+        <button id="trailModeToggle">Trail: 10</button>
+        <button id="labelToggle" class="active" title="Show or hide drone, target, and obstacle info panels">Show Labels</button>
+        <div class="label-size-control" aria-label="Label size">
+          <button id="labelSizeDown" title="Decrease label size ([)">Size-</button>
+          <span id="labelSizeValue">Label 100%</span>
+          <button id="labelSizeUp" title="Increase label size (])">Size+</button>
+        </div>
+        <span id="connectionStatus" class="status disconnected">Disconnected</span>
+        <label class="trail-length-control">
+          <span id="trailLengthText">Trail Length</span>
+          <input id="trailLength" type="range" min="2" max="200" value="80" />
+          <span id="trailLengthLabel">80</span>
+        </label>
+        <label class="scale-control">
+          <span id="droneScaleText">Drone</span>
+          <input id="droneScale" type="range" min="50" max="200" value="100" />
+          <span id="droneScaleLabel">100%</span>
+        </label>
+        <label class="scale-control">
+          <span id="targetScaleText">Target</span>
+          <input id="targetScale" type="range" min="50" max="200" value="100" />
+          <span id="targetScaleLabel">100%</span>
+        </label>
+        <label class="scale-control">
+          <span id="obstacleScaleText">Obstacle</span>
+          <input id="obstacleScale" type="range" min="50" max="200" value="100" />
+          <span id="obstacleScaleLabel">100%</span>
+        </label>
+        <label class="scale-control">
+          <span id="labelScaleText">Label</span>
+          <input id="labelScale" type="range" min="50" max="300" value="100" />
+          <span id="labelScaleLabel">100%</span>
+        </label>
+        <span id="statusSummary" class="status-summary"></span>
+        <span id="clickPosition" class="click-position">Click: (-, -, -)</span>
+        <div class="status-right">
+          <span id="activityStatus" class="hidden"></span>
+          <span id="zoomScaleStatus" class="zoom-scale-status">Scale: 100%</span>
+        </div>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
