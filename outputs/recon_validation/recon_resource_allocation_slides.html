@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>无人机侦察任务聚合与资源分配</title>
+<style>
+:root {
+  --bg: #07111f;
+  --surface: #0d1d31;
+  --surface-2: #122945;
+  --line: #284665;
+  --text: #edf5ff;
+  --muted: #a8bad0;
+  --blue: #60a5fa;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --orange: #fb923c;
+  --red: #fb7185;
+  --purple: #a78bfa;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif; }
+body { overflow: hidden; }
+.deck { height: 100vh; position: relative; }
+.slide {
+  display: none;
+  height: 100vh;
+  padding: 5.2vh 6.2vw 6vh;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 8%, rgba(34,211,238,.11), transparent 24%),
+    radial-gradient(circle at 4% 94%, rgba(96,165,250,.09), transparent 28%),
+    var(--bg);
+}
+.slide.active { display: block; }
+.slide::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--blue), var(--purple));
+  opacity: .85;
+}
+.eyebrow { color: var(--cyan); letter-spacing: .16em; text-transform: uppercase; font-size: 12px; font-weight: 700; }
+h1 { margin: 18px 0 16px; font-size: clamp(34px, 5vw, 74px); line-height: 1.06; letter-spacing: -.035em; max-width: 900px; }
+h2 { margin: 12px 0 24px; font-size: clamp(28px, 3.2vw, 48px); letter-spacing: -.025em; }
+h3 { margin: 0 0 10px; font-size: 19px; }
+p { margin: 0; line-height: 1.65; color: var(--muted); }
+.subtitle { font-size: clamp(17px, 2vw, 26px); max-width: 830px; color: #c8d7e8; line-height: 1.55; }
+.meta { position: absolute; left: 6.2vw; bottom: 7vh; color: var(--muted); font-size: 14px; }
+.page { position: absolute; right: 6.2vw; bottom: 7vh; color: var(--muted); font-size: 13px; }
+.accent { color: var(--cyan); }
+.muted { color: var(--muted); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.panel { background: rgba(13,29,49,.82); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+.panel h3 { color: #e9f3ff; }
+.panel p { font-size: 15px; }
+.callout { border-left: 3px solid var(--cyan); padding: 12px 16px; background: rgba(34,211,238,.08); border-radius: 0 10px 10px 0; }
+.tag { display: inline-flex; align-items: center; padding: 5px 9px; border-radius: 999px; background: rgba(96,165,250,.13); color: #b9d9ff; border: 1px solid rgba(96,165,250,.35); font-size: 12px; margin: 3px 4px 3px 0; }
+.tag.green { background: rgba(52,211,153,.12); color: #a7f3d0; border-color: rgba(52,211,153,.35); }
+.tag.orange { background: rgba(251,146,60,.12); color: #fed7aa; border-color: rgba(251,146,60,.35); }
+.tag.red { background: rgba(251,113,133,.12); color: #fecdd3; border-color: rgba(251,113,133,.35); }
+.requirement { display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: start; padding: 14px 0; border-bottom: 1px solid rgba(40,70,101,.75); }
+.requirement:last-child { border-bottom: 0; }
+.req-id { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: rgba(34,211,238,.13); color: var(--cyan); font-weight: 800; }
+.requirement strong { display: block; margin-bottom: 5px; font-size: 16px; }
+.requirement span { color: var(--muted); font-size: 14px; line-height: 1.55; }
+.flow { width: 100%; height: 55vh; min-height: 360px; }
+.flow text, .svg-chart text { font-family: Inter, "Segoe UI", "PingFang SC", Arial, sans-serif; }
+.flow-box { fill: #102640; stroke: #376183; stroke-width: 1.5; }
+.flow-box.highlight { fill: #12394b; stroke: var(--cyan); }
+.flow-label { fill: #eaf4ff; font-size: 16px; font-weight: 700; }
+.flow-sub { fill: #9bb0c8; font-size: 12px; }
+.flow-tag { fill: #67e8f9; font-size: 12px; font-weight: 700; }
+.flow-line { stroke: #4d7295; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+.algorithm-card { min-height: 210px; }
+.algorithm-number { color: var(--cyan); font-size: 14px; font-weight: 800; letter-spacing: .12em; }
+.formula { display: block; margin: 12px 0; padding: 12px 14px; border: 1px solid #315575; border-radius: 10px; background: #09192c; color: #d9edff; font-family: "SFMono-Regular", Consolas, monospace; font-size: 14px; line-height: 1.7; overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.data-table th, .data-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid rgba(40,70,101,.8); vertical-align: top; }
+.data-table th { color: #9fc4e7; font-weight: 700; }
+.data-table td { color: #dce9f5; }
+.data-table tr:last-child td { border-bottom: 0; }
+.metric-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 6px 0 20px; }
+.metric { background: rgba(13,29,49,.9); border: 1px solid var(--line); border-radius: 14px; padding: 15px 16px; }
+.metric-value { font-size: 30px; font-weight: 800; color: var(--text); }
+.metric-label { color: var(--muted); font-size: 13px; margin-top: 3px; }
+.status { font-weight: 800; }
+.status-ok { color: var(--green); }
+.status-blocked { color: var(--orange); }
+.status-fail { color: var(--red); }
+.result-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 22px; align-items: start; }
+.bar-list { display: grid; gap: 14px; }
+.bar-item { display: grid; grid-template-columns: 170px 1fr 72px; gap: 10px; align-items: center; font-size: 13px; }
+.bar-track { height: 12px; background: #1a3049; border-radius: 99px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cyan), var(--blue)); }
+.bar-fill.orange { background: linear-gradient(90deg, var(--orange), #fbbf24); }
+.bar-fill.red { background: linear-gradient(90deg, var(--red), #f43f5e); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 12px; color: var(--muted); font-size: 13px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 5px; }
+.two-col-list { columns: 2; column-gap: 34px; }
+.two-col-list li { break-inside: avoid; margin: 0 0 12px; color: var(--muted); line-height: 1.5; }
+.two-col-list strong { color: var(--text); }
+.nav { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 20; display: grid; gap: 9px; }
+.nav button { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 50%; background: #44607c; cursor: pointer; }
+.nav button.active { background: var(--cyan); box-shadow: 0 0 0 4px rgba(34,211,238,.14); }
+.hint { position: fixed; right: 24px; bottom: 20px; z-index: 20; color: #7790aa; font-size: 11px; }
+.code-block { background: #08182b; border: 1px solid #284665; border-radius: 12px; padding: 16px 18px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; line-height: 1.65; color: #cde6ff; white-space: pre-wrap; }
+.check-list { display: grid; gap: 11px; }
+.check { display: grid; grid-template-columns: 24px 1fr; gap: 9px; align-items: start; color: var(--muted); line-height: 1.5; }
+.check::before { content: "✓"; color: var(--green); font-weight: 800; }
+@media (max-width: 850px) {
+  .slide { padding: 4vh 8vw 7vh 6vw; overflow-y: auto; }
+  .grid-2, .grid-3, .result-grid { grid-template-columns: 1fr; }
+  .metric-row { grid-template-columns: repeat(2, 1fr); }
+  .two-col-list { columns: 1; }
+  .flow { min-height: 470px; }
+  .nav { right: 9px; }
+}
+@media print {
+  body { overflow: visible; background: #fff; color: #111; }
+  .slide { display: block !important; page-break-after: always; height: 100vh; background: #fff; color: #111; }
+  .nav, .hint { display: none; }
+  .panel, .metric { border-color: #b7c5d4; background: #f6f9fc; }
+  p, .requirement span, .metric-label, .muted { color: #44566b; }
+  .flow-box { fill: #eef6fb; stroke: #4b6b86; }
+  .flow-label, .data-table td { fill: #111; color: #111; }
+}
+</style>
+</head>
+<body>
+<main class="deck" id="deck">
+  <section class="slide active" data-title="概览">
+    <div class="eyebrow">UAV TASK · RECONNAISSANCE ALLOCATION</div>
+    <h1>无人机侦察任务聚合<br><span class="accent">与异构资源分配</span></h1>
+    <p class="subtitle">面向 C172 与 SF50 两类平台、约 10 架飞机，将前端任务规划结果转换为可验证的飞机—载荷—任务分配方案。</p>
+    <div style="height: 42px"></div>
+    <div class="grid-3">
+      <div class="panel"><span class="tag">输入</span><h3>规划任务 + 聚合任务组</h3><p>保留任务依赖、区域、时间窗口、能力和载荷需求。</p></div>
+      <div class="panel"><span class="tag green">求解</span><h3>候选筛选 + CP-SAT</h3><p>先剔除能力不满足的平台，再进行全局分配。</p></div>
+      <div class="panel"><span class="tag orange">输出</span><h3>主任务 + 备用 + 航迹接口</h3><p>为后续航迹规划提供任务顺序、区域和载荷标识。</p></div>
+    </div>
+    <div class="meta">基于 YaqiChang/UAV-task 当前实现 · 离线仿真验证</div>
+    <div class="page">01 / 08</div>
+  </section>
+
+  <section class="slide" data-title="需求分析">
+    <div class="eyebrow">01 · REQUIREMENT ANALYSIS</div>
+    <h2>需求拆解：从前端任务到可执行资源方案</h2>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="requirement"><div class="req-id">R1</div><div><strong>接口承接</strong><span>读取 planner output、aggregation output、fleet snapshot 和已完成任务状态，避免任务聚合后丢失前置依赖。</span></div></div>
+        <div class="requirement"><div class="req-id">R2</div><div><strong>异构平台与载荷</strong><span>区分 C172、SF50 的飞行能力，并将 VISIBLE、INFRARED、RADAR 映射到可用虚拟载荷。</span></div></div>
+        <div class="requirement"><div class="req-id">R3</div><div><strong>约束可行性</strong><span>同时检查载荷、飞行能力、时间窗口、高度范围、任务时长、平台可用状态和依赖关系。</span></div></div>
+      </div>
+      <div class="panel">
+        <div class="requirement"><div class="req-id">R4</div><div><strong>资源分配</strong><span>每个任务组分配给满足约束的飞机，允许同一飞机承接多个时间不冲突的任务组，并保留备用飞机。</span></div></div>
+        <div class="requirement"><div class="req-id">R5</div><div><strong>下游消费</strong><span>输出飞机任务包、任务顺序、目标区域、载荷和时间范围，供航迹规划模块继续处理。</span></div></div>
+        <div class="callout" style="margin-top: 18px;"><strong>研究边界</strong><br><span class="muted">当前验证任务聚合与资源分配中间层，航迹点、通信带宽、燃油精算和飞控执行保留给下游模块。</span></div>
+      </div>
+    </div>
+    <div class="page">02 / 08</div>
+  </section>
+
+  <section class="slide" data-title="流程对应">
+    <div class="eyebrow">02 · REQUIREMENT-ALIGNED PIPELINE</div>
+    <h2>流程：每个模块对应一个可验证需求</h2>
+    <svg class="flow" viewBox="0 0 1160 520" role="img" aria-label="从前端任务规划到资源分配和航迹接口的流程图">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#4d7295"/></marker>
+      </defs>
+      <path class="flow-line" d="M182 165 L250 165"/><path class="flow-line" d="M422 165 L490 165"/><path class="flow-line" d="M662 165 L730 165"/><path class="flow-line" d="M902 165 L970 165"/>
+      <path class="flow-line" d="M576 250 L576 354"/>
+      <rect class="flow-box" x="30" y="110" width="152" height="110" rx="14"/><text class="flow-tag" x="50" y="138">R1</text><text class="flow-label" x="50" y="168">前端输出</text><text class="flow-sub" x="50" y="191">tasks + groups + fleet</text>
+      <rect class="flow-box highlight" x="250" y="110" width="172" height="110" rx="14"/><text class="flow-tag" x="270" y="138">R1 / R2</text><text class="flow-label" x="270" y="168">标准化</text><text class="flow-sub" x="270" y="191">schemas + normalize</text>
+      <rect class="flow-box highlight" x="490" y="110" width="172" height="110" rx="14"/><text class="flow-tag" x="510" y="138">R1 / R3</text><text class="flow-label" x="510" y="168">任务依赖校验</text><text class="flow-sub" x="510" y="191">DAG + completed IDs</text>
+      <rect class="flow-box highlight" x="730" y="110" width="172" height="110" rx="14"/><text class="flow-tag" x="750" y="138">R2 / R3</text><text class="flow-label" x="750" y="168">候选筛选</text><text class="flow-sub" x="750" y="191">payload + capability</text>
+      <rect class="flow-box highlight" x="970" y="110" width="158" height="110" rx="14"/><text class="flow-tag" x="990" y="138">R4</text><text class="flow-label" x="990" y="168">CP-SAT</text><text class="flow-sub" x="990" y="191">global assignment</text>
+      <rect class="flow-box" x="470" y="354" width="212" height="110" rx="14"/><text class="flow-tag" x="490" y="382">R5</text><text class="flow-label" x="490" y="412">航迹规划适配器</text><text class="flow-sub" x="490" y="435">task bundles + route request</text>
+      <text x="32" y="300" fill="#a8bad0" font-size="15">关键关系：先聚合任务组，再进行飞机与载荷分配；依赖校验和候选筛选位于求解器之前。</text>
+      <text x="32" y="330" fill="#60a5fa" font-size="14">异常输出：BLOCKED 表示前置条件未满足，INFEASIBLE 表示没有满足约束的飞机。</text>
+    </svg>
+    <div class="page">03 / 08</div>
+  </section>
+
+  <section class="slide" data-title="核心算法">
+    <div class="eyebrow">03 · CORE ALGORITHM</div>
+    <h2>核心算法：候选集约束下的任务组分配</h2>
+    <div class="grid-3">
+      <div class="panel algorithm-card"><div class="algorithm-number">STEP 01</div><h3>任务标准化</h3><p>统一任务和任务组字段，将成员任务的载荷、能力和约束汇总到任务组层级。</p><span class="formula">G = Normalize(T, Groups)<br>payload(G) = ∪ payload(Tᵢ)</span><span class="tag">schemas.py</span><span class="tag">normalize.py</span></div>
+      <div class="panel algorithm-card"><div class="algorithm-number">STEP 02</div><h3>候选平台构造</h3><p>只有同时满足载荷、飞行能力、平台状态和工作时长的平台进入候选集合。</p><span class="formula">C(g) = { a | payload(g) ⊆ payload(a)<br>∧ capability(g) ⊆ capability(a) }</span><span class="tag green">candidate_filter.py</span></div>
+      <div class="panel algorithm-card"><div class="algorithm-number">STEP 03</div><h3>CP-SAT 分配</h3><p>在候选集合上联合决定任务组归属，生成主任务飞机和备用飞机。</p><span class="formula">x[g,a] ∈ {0,1}<br>Σₐ x[g,a] = 1<br>a ∈ C(g)</span><span class="tag orange">cp_sat_allocator.py</span></div>
+    </div>
+    <div class="grid-2" style="margin-top: 18px;">
+      <div class="panel"><h3>硬约束</h3><div class="check-list"><div class="check">任务组只能分配给候选平台。</div><div class="check">任务组分配满足依赖、任务时长和时间不冲突条件。</div><div class="check">平台可用状态和剩余工作时长必须满足任务需求。</div></div></div>
+      <div class="panel"><h3>优化目标与回退</h3><div class="check-list"><div class="check">优先级、平台类型和任务负载进入分配代价。</div><div class="check">安装 OR-Tools 时使用 CP-SAT，结果记录求解状态和目标值。</div><div class="check">缺少 OR-Tools 时使用确定性回退，便于接口测试。</div></div></div>
+    </div>
+    <div class="page">04 / 08</div>
+  </section>
+
+  <section class="slide" data-title="能力模型">
+    <div class="eyebrow">03 · CAPABILITY MODEL</div>
+    <h2>算法输入的能力模型：平台、载荷与任务需求</h2>
+    <div class="grid-2">
+      <div class="panel">
+        <h3>载荷能力映射</h3>
+        <table class="data-table">
+          <thead><tr><th>任务需求</th><th>虚拟载荷</th><th>验证能力</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag">VISIBLE</span></td><td><code>payload.wescam_mx15</code></td><td>EO_DAYLIGHT、VIDEO_TRACKING</td></tr>
+            <tr><td><span class="tag">INFRARED</span></td><td><code>payload.wescam_mx15</code></td><td>IR_THERMAL、TARGET_GEOLOCATION</td></tr>
+            <tr><td><span class="tag orange">RADAR</span></td><td><code>payload.lynx_mmr</code></td><td>RADAR、SAR、RADAR_GMTI、DMTI</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>平台仿真能力</h3>
+        <table class="data-table">
+          <thead><tr><th>平台</th><th>主要能力</th><th>示例角色</th></tr></thead>
+          <tbody>
+            <tr><td><strong>C172</strong></td><td>LOITER、LOW_ALTITUDE_OPERATION、SHORT_RANGE_RECON</td><td>可见光 / 红外区域观察</td></tr>
+            <tr><td><strong>SF50</strong></td><td>FAST_TRANSIT、HIGH_ALTITUDE_OPERATION、LONG_RANGE_RECON</td><td>雷达侦察 / 远程转场</td></tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top: 16px;"><span class="muted">手册用于整理平台性能参数；载荷安装和平台兼容关系属于仿真 profile，用于验证分配逻辑。</span></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top: 20px;"><h3>10 架示例舰队</h3><p><span class="tag green">C172 × 5</span><span class="tag">MX-15 × 5</span><span class="tag orange">SF50 × 5</span><span class="tag orange">Lynx × 5</span> 每架飞机包含可用状态、剩余续航、最大工作时间和已安装载荷。</p></div>
+    <div class="page">05 / 08</div>
+  </section>
+
+  <section class="slide" data-title="接口输出">
+    <div class="eyebrow">03 · SYSTEM INTERFACE</div>
+    <h2>输出：分配结果可以被下游航迹规划消费</h2>
+    <div class="grid-2">
+      <div>
+        <div class="panel" style="margin-bottom: 18px;"><h3>核心入口</h3><div class="code-block">allocate_mission(
+  planner_output,
+  aggregation_output,
+  fleet_snapshot,
+  completed_task_ids
+)</div></div>
+        <div class="panel"><h3>结果状态</h3><div class="grid-3"><div><span class="tag green">ALLOCATED</span><p>所有任务组完成分配</p></div><div><span class="tag orange">BLOCKED</span><p>依赖或聚合状态阻塞</p></div><div><span class="tag red">INFEASIBLE</span><p>没有可行平台</p></div></div></div>
+      </div>
+      <div class="panel"><h3>典型输出结构</h3><div class="code-block">{
+  "status": "ALLOCATED",
+  "assignments": [
+    {
+      "aircraft_id": "C172-01",
+      "role": "PRIMARY",
+      "task_sequence": ["T01", "T02"],
+      "payload_ids": ["payload.wescam_mx15"]
+    }
+  ],
+  "reserve_aircraft": ["..."],
+  "candidate_summary": {"...": "..."},
+  "solver": {"...": "..."}
+}</div></div>
+    </div>
+    <div class="panel" style="margin-top: 20px;"><h3>与既有系统的边界</h3><p><span class="accent">allocation_to_multiuav_plan</span> 将分配结果转换为飞机任务包和 route request。航迹点生成、路径代价回传、通信链路竞争和执行控制由下游模块负责。</p></div>
+    <div class="page">06 / 08</div>
+  </section>
+
+  <section class="slide" data-title="实验结果">
+    <div class="eyebrow">04 · RESULTS</div>
+    <h2>结果：分配、阻塞与不可行状态均可被区分</h2>
+    <div class="metric-row">
+      <div class="metric"><div class="metric-value">5</div><div class="metric-label">自动验证场景</div></div>
+      <div class="metric"><div class="metric-value" style="color: var(--green);">3</div><div class="metric-label">成功分配场景</div></div>
+      <div class="metric"><div class="metric-value">10</div><div class="metric-label">定向测试通过</div></div>
+      <div class="metric"><div class="metric-value" style="color: var(--blue);">OPTIMAL</div><div class="metric-label">CP-SAT 基线场景状态</div></div>
+    </div>
+    <div class="result-grid">
+      <div class="panel">
+        <h3>场景结果矩阵</h3>
+        <table class="data-table">
+          <thead><tr><th>场景</th><th>状态</th><th>主任务飞机</th><th>载荷</th><th>候选数</th></tr></thead>
+          <tbody>
+            <tr><td>VISIBLE + LOITER</td><td class="status status-ok">ALLOCATED</td><td>C172-01</td><td>MX-15</td><td>5</td></tr>
+            <tr><td>INFRARED + LOITER</td><td class="status status-ok">ALLOCATED</td><td>C172-01</td><td>MX-15</td><td>5</td></tr>
+            <tr><td>RADAR</td><td class="status status-ok">ALLOCATED</td><td>SF50-01</td><td>Lynx</td><td>5</td></tr>
+            <tr><td>DEPENDENCY BLOCKED</td><td class="status status-blocked">BLOCKED</td><td>—</td><td>—</td><td>0</td></tr>
+            <tr><td>RADAR WITHOUT PAYLOAD</td><td class="status status-fail">INFEASIBLE</td><td>—</td><td>—</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>候选平台数量</h3>
+        <div class="bar-list">
+          <div class="bar-item"><span>VISIBLE</span><div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div><strong>5</strong></div>
+          <div class="bar-item"><span>INFRARED</span><div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div><strong>5</strong></div>
+          <div class="bar-item"><span>RADAR</span><div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div><strong>5</strong></div>
+          <div class="bar-item"><span>依赖阻塞</span><div class="bar-track"><div class="bar-fill orange" style="width: 0%"></div></div><strong>0</strong></div>
+          <div class="bar-item"><span>无雷达载荷</span><div class="bar-track"><div class="bar-fill red" style="width: 0%"></div></div><strong>0</strong></div>
+        </div>
+        <div class="legend"><span><i style="background: var(--cyan)"></i>可分配候选</span><span><i style="background: var(--orange)"></i>前置条件阻塞</span><span><i style="background: var(--red)"></i>无可行资源</span></div>
+      </div>
+    </div>
+    <div class="page">07 / 08</div>
+  </section>
+
+  <section class="slide" data-title="验证与边界">
+    <div class="eyebrow">04 · VALIDATION & SCOPE</div>
+    <h2>验证结论与当前边界</h2>
+    <div class="grid-2">
+      <div class="panel">
+        <h3>已经验证的内容</h3>
+        <ul class="two-col-list">
+          <li><strong>接口：</strong>三类前端快照可以进入统一分配入口。</li>
+          <li><strong>聚合：</strong>任务组成员、目标区域和任务顺序被保留。</li>
+          <li><strong>匹配：</strong>VISIBLE、INFRARED、RADAR 能映射到对应虚拟载荷。</li>
+          <li><strong>筛选：</strong>缺少 LOITER、RADAR 等原因会被记录。</li>
+          <li><strong>优化：</strong>CP-SAT 返回可行分配和求解状态。</li>
+          <li><strong>异常：</strong>依赖缺失与载荷缺失分别输出 BLOCKED、INFEASIBLE。</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>汇报时需要限定的结论</h3>
+        <ul class="two-col-list">
+          <li><strong>平台：</strong>C172、SF50 参数来自手册整理后的仿真 profile。</li>
+          <li><strong>载荷：</strong>MX-15、Lynx 的兼容关系用于算法验证。</li>
+          <li><strong>代价：</strong>当前任务组使用估计工作量，精确航程和燃油由航迹层补充。</li>
+          <li><strong>通信：</strong>静态链路字段保留扩展位置，尚未进行带宽竞争求解。</li>
+          <li><strong>执行：</strong>尚未向 X-Plane、飞控或在线重规划服务发送指令。</li>
+          <li><strong>实验：</strong>当前结果证明分配逻辑和接口链路可运行，不代表真实飞行性能。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top: 22px;"><strong>当前阶段的技术结论</strong><br><span class="muted">前端任务规划和任务聚合结果已经可以通过标准化、依赖校验、候选筛选和 CP-SAT 分配转换为结构化飞机任务包，并对可分配、依赖阻塞和资源不可行三类状态给出可追溯结果。</span></div>
+    <div class="meta">建议现场展示：流程页 → 能力模型页 → 结果矩阵页 → report.html 实际输出</div>
+    <div class="page">08 / 08</div>
+  </section>
+</main>
+<nav class="nav" id="nav" aria-label="幻灯片导航"></nav>
+<div class="hint">← → 翻页 · Home / End · P 打印</div>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const nav = document.getElementById('nav');
+  let index = 0;
+  slides.forEach((slide, i) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.setAttribute('aria-label', `${i + 1}. ${slide.dataset.title}`);
+    button.addEventListener('click', () => show(i));
+    nav.appendChild(button);
+  });
+  function show(next) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    [...nav.children].forEach((button, i) => button.classList.toggle('active', i === index));
+    history.replaceState(null, '', `#slide-${index + 1}`);
+  }
+  function move(delta) { show(index + delta); }
+  const hash = Number(location.hash.replace('#slide-', ''));
+  if (Number.isInteger(hash) && hash > 0) index = hash - 1;
+  show(index);
+  window.addEventListener('keydown', event => {
+    if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+    if (['ArrowLeft', 'PageUp'].includes(event.key)) { event.preventDefault(); move(-1); }
+    if (event.key === 'Home') { event.preventDefault(); show(0); }
+    if (event.key === 'End') { event.preventDefault(); show(slides.length - 1); }
+    if (event.key.toLowerCase() === 'p') window.print();
+  });
+})();
+</script>
+</body>
+</html>

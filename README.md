@@ -143,7 +143,17 @@ bash scripts/run_recon_validation.sh \
 
 打开 `outputs/recon_validation/report.html`，查看任务组、主任务飞机、载荷、候选数、备用飞机、求解器和失败原因。
 
-## 8. 当前模型边界
+## 8. 汇报 HTML Slide
+
+当前示例结果已经整理为离线汇报页面：
+
+```text
+outputs/recon_validation/recon_resource_allocation_slides.html
+```
+
+浏览器打开后使用左右方向键翻页，按 `P` 进入打印或导出 PDF，页面内容包括需求分析、需求对应流程、核心算法、能力模型、接口输出和五个验证场景结果。
+
+## 9. 当前模型边界
 
 - 一个任务组由一架飞机执行。
 - 同一飞机可以接收多个时间上不冲突的任务组。
@@ -151,7 +161,7 @@ bash scripts/run_recon_validation.sh \
 - 通信链路的静态设备知识保留扩展位置，当前示例验证载荷和飞行能力。
 - 多机协同执行同一任务、链路带宽竞争和在线重分配属于后续扩展。
 
-## 9. 旧版聚合与分配示例
+## 10. 旧版聚合与分配示例
 
 ```bash
 python -m mission_planner.cli \
