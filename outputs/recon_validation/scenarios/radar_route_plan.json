@@ -1,0 +1,97 @@
+{
+  "mission_id": "M001",
+  "allocation_version": 1,
+  "context_version": 3,
+  "status": "READY_FOR_ROUTE_PLANNING",
+  "aircraft_task_bundles": [
+    {
+      "aircraft_id": "SF50-01",
+      "aircraft_model": "SF50",
+      "task_sequence": [
+        "T01",
+        "T02"
+      ],
+      "task_groups": [
+        {
+          "group_id": "G01",
+          "task_ids": [
+            "T01",
+            "T02"
+          ],
+          "target_area_ids": [
+            "AREA-B",
+            "AREA-C"
+          ],
+          "payload_tokens": [
+            "RADAR"
+          ],
+          "payload_ids": [
+            "payload.lynx_mmr"
+          ],
+          "required_capabilities": [],
+          "start_time_sec": 0,
+          "end_time_sec": 180
+        }
+      ],
+      "route_request": {
+        "target_area_ids": [
+          "AREA-B",
+          "AREA-C"
+        ],
+        "payload_tokens": [
+          "RADAR"
+        ],
+        "payload_ids": [
+          "payload.lynx_mmr"
+        ]
+      }
+    }
+  ],
+  "reserve_aircraft": [
+    {
+      "aircraft_id": "C172-01",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "C172-02",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "C172-03",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "C172-04",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "C172-05",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "SF50-02",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "SF50-03",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "SF50-04",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "SF50-05",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE"
+    }
+  ]
+}

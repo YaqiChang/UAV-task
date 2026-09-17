@@ -96,7 +96,54 @@ pytest -q
 
 在没有安装 OR-Tools 的环境中，旧版分配接口和新接口都使用确定性回退求解。安装 `requirements.txt` 后，新接口使用 CP-SAT。
 
-## 7. 当前模型边界
+## 7. 侦察资源分配验证与汇报输出
+
+运行固定场景矩阵：
+
+```bash
+bash scripts/run_recon_validation.sh
+```
+
+脚本默认读取 `examples/recon_allocation_request.json`，自动运行以下场景：
+
+1. `VISIBLE + LOITER` 基线分配。
+2. `INFRARED + LOITER` 红外载荷替换。
+3. `RADAR` 雷达载荷匹配。
+4. 删除 `T00` 完成标记后的依赖阻塞。
+5. 移除所有 Lynx 雷达后的不可行诊断。
+
+输出目录默认为 `outputs/recon_validation/`，包括：
+
+- `summary.csv`：便于导入 Excel 的结果表。
+- `summary.json`：机器可读的汇总结果。
+- `report.md`：可直接整理到汇报材料中的文字报告。
+- `report.html`：离线打开的结果图表和详细表格。
+- `allocation_summary.svg`：可插入 PPT 的矢量图。
+- `scenarios/*.json`：每个场景的完整分配结果。
+- `scenarios/*_route_plan.json`：分配结果传给航迹规划模块的适配结果。
+
+使用自己的三份前端快照：
+
+```bash
+bash scripts/run_recon_validation.sh \
+  --planner-output path/to/planner_output.json \
+  --aggregation-output path/to/aggregation_output.json \
+  --fleet-snapshot path/to/fleet_snapshot.json \
+  --completed-task-ids T00 \
+  --output-dir outputs/my_recon_validation
+```
+
+如果已有合并请求文件：
+
+```bash
+bash scripts/run_recon_validation.sh \
+  --request path/to/recon_allocation_request.json \
+  --output-dir outputs/my_recon_validation
+```
+
+打开 `outputs/recon_validation/report.html`，查看任务组、主任务飞机、载荷、候选数、备用飞机、求解器和失败原因。
+
+## 8. 当前模型边界
 
 - 一个任务组由一架飞机执行。
 - 同一飞机可以接收多个时间上不冲突的任务组。
@@ -104,7 +151,7 @@ pytest -q
 - 通信链路的静态设备知识保留扩展位置，当前示例验证载荷和飞行能力。
 - 多机协同执行同一任务、链路带宽竞争和在线重分配属于后续扩展。
 
-## 8. 旧版聚合与分配示例
+## 9. 旧版聚合与分配示例
 
 ```bash
 python -m mission_planner.cli \

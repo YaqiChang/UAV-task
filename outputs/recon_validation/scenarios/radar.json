@@ -1,0 +1,352 @@
+{
+  "mission_id": "M001",
+  "allocation_version": 1,
+  "plan_version": 1,
+  "aggregation_version": 1,
+  "context_version": 3,
+  "fleet_snapshot_version": 7,
+  "groups": [
+    {
+      "group_id": "G01",
+      "member_task_ids": [
+        "T01",
+        "T02"
+      ],
+      "group_type": "AREA_OBSERVATION",
+      "target_area_ids": [
+        "AREA-B",
+        "AREA-C"
+      ],
+      "combined_priority": 2,
+      "estimated_workload_sec": 180,
+      "required_payloads": [
+        "RADAR"
+      ],
+      "required_capabilities": [],
+      "time_window": {
+        "start": 0,
+        "end": null
+      },
+      "constraints": {
+        "min_altitude_m": 500.0,
+        "max_altitude_m": 1000.0
+      },
+      "depends_on_groups": [],
+      "external_dependencies": [
+        "T00"
+      ],
+      "estimated_transit_time_sec": 0
+    }
+  ],
+  "dependency_validation": {
+    "valid": true,
+    "completed_task_ids": [
+      "T00"
+    ],
+    "blockers": []
+  },
+  "warnings": [],
+  "conflicts": [],
+  "candidate_summary": {
+    "candidates": {
+      "G01": [
+        "SF50-01",
+        "SF50-02",
+        "SF50-03",
+        "SF50-04",
+        "SF50-05"
+      ]
+    },
+    "rejected": {
+      "G01": {
+        "C172-01": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "C172-02": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "C172-03": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "C172-04": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "C172-05": [
+          "MISSING_PAYLOAD:RADAR"
+        ]
+      }
+    }
+  },
+  "status": "ALLOCATED",
+  "reason": null,
+  "assignments": [
+    {
+      "aircraft_id": "C172-01",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 4267.0,
+        "cruise_speed_mps": 63.79,
+        "fuel_burn_reference": 8.0
+      }
+    },
+    {
+      "aircraft_id": "C172-02",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 4267.0,
+        "cruise_speed_mps": 63.79,
+        "fuel_burn_reference": 8.0
+      }
+    },
+    {
+      "aircraft_id": "C172-03",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 4267.0,
+        "cruise_speed_mps": 63.79,
+        "fuel_burn_reference": 8.0
+      }
+    },
+    {
+      "aircraft_id": "C172-04",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 4267.0,
+        "cruise_speed_mps": 63.79,
+        "fuel_burn_reference": 8.0
+      }
+    },
+    {
+      "aircraft_id": "C172-05",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 4267.0,
+        "cruise_speed_mps": 63.79,
+        "fuel_burn_reference": 8.0
+      }
+    },
+    {
+      "aircraft_id": "SF50-01",
+      "aircraft_model": "SF50",
+      "role": "PRIMARY",
+      "groups": [
+        {
+          "group_id": "G01",
+          "task_ids": [
+            "T01",
+            "T02"
+          ],
+          "aircraft_id": "SF50-01",
+          "aircraft_model": "SF50",
+          "payload_tokens": [
+            "RADAR"
+          ],
+          "payload_ids": [
+            "payload.lynx_mmr"
+          ],
+          "required_capabilities": [],
+          "target_area_ids": [
+            "AREA-B",
+            "AREA-C"
+          ],
+          "start_time_sec": 0,
+          "end_time_sec": 180,
+          "service_duration_sec": 180,
+          "estimated_workload_sec": 180,
+          "estimated_cost": 2600001,
+          "role": "PRIMARY"
+        }
+      ],
+      "task_sequence": [
+        "T01",
+        "T02"
+      ],
+      "total_workload_sec": 180,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.LYNX_MMR",
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 8534.0,
+        "cruise_speed_mps": 154.33,
+        "fuel_burn_reference": 315.0
+      }
+    },
+    {
+      "aircraft_id": "SF50-02",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.LYNX_MMR",
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 8534.0,
+        "cruise_speed_mps": 154.33,
+        "fuel_burn_reference": 315.0
+      }
+    },
+    {
+      "aircraft_id": "SF50-03",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.LYNX_MMR",
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 8534.0,
+        "cruise_speed_mps": 154.33,
+        "fuel_burn_reference": 315.0
+      }
+    },
+    {
+      "aircraft_id": "SF50-04",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.LYNX_MMR",
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 8534.0,
+        "cruise_speed_mps": 154.33,
+        "fuel_burn_reference": 315.0
+      }
+    },
+    {
+      "aircraft_id": "SF50-05",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE",
+      "groups": [],
+      "task_sequence": [],
+      "total_workload_sec": 0,
+      "remaining_endurance_sec": 3600,
+      "installed_payloads": [
+        "PAYLOAD.LYNX_MMR",
+        "PAYLOAD.WESCAM_MX15"
+      ],
+      "performance": {
+        "service_ceiling_m": 8534.0,
+        "cruise_speed_mps": 154.33,
+        "fuel_burn_reference": 315.0
+      }
+    }
+  ],
+  "reserve_aircraft": [
+    {
+      "aircraft_id": "C172-01",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "C172-02",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "C172-03",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "C172-04",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "C172-05",
+      "aircraft_model": "C172",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "SF50-02",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "SF50-03",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "SF50-04",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE"
+    },
+    {
+      "aircraft_id": "SF50-05",
+      "aircraft_model": "SF50",
+      "role": "AVAILABLE_RESERVE"
+    }
+  ],
+  "solver": {
+    "solver_name": "ortools_cp_sat",
+    "solver_status": "OPTIMAL",
+    "objective_value": 2600001.0,
+    "wall_time_sec": 0.002076797,
+    "failures": [],
+    "assigned_group_ids": [
+      "G01"
+    ],
+    "unassigned_group_ids": []
+  },
+  "validation": {
+    "all_groups_assigned_once": true,
+    "dependency_constraints_satisfied": true,
+    "candidate_constraints_applied": true
+  }
+}

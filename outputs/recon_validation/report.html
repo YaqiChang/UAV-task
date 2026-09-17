@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>侦察资源分配验证报告</title>
+<style>
+body { margin: 0; padding: 32px; color: #1a202c; background: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+main { max-width: 1180px; margin: 0 auto; }
+h1 { margin: 0 0 8px; font-size: 26px; }
+p { color: #4a5568; }
+.figure { overflow-x: auto; margin: 24px 0; }
+svg { min-width: 900px; max-width: 100%; height: auto; }
+table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+th, td { border-bottom: 1px solid #e2e8f0; padding: 10px 8px; text-align: left; vertical-align: top; }
+th { color: #4a5568; font-weight: 600; }
+.status { font-weight: 600; }
+.status-allocated { color: #2f855a; }
+.status-blocked { color: #c05621; }
+.status-infeasible { color: #c53030; }
+code { background: #edf2f7; padding: 2px 4px; border-radius: 3px; }
+.note { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+<h1>侦察资源分配验证报告</h1>
+<p>输入：<code>examples/recon_allocation_request.json</code></p>
+<div class="figure"><svg xmlns="http://www.w3.org/2000/svg" width="1100" height="416" viewBox="0 0 1100 416" role="img" aria-labelledby="title desc">
+<title id="title">Reconnaissance resource allocation validation</title>
+<desc id="desc">Scenario status, primary aircraft, payload, and candidate counts.</desc>
+<rect width="100%" height="100%" fill="#f7fafc"/>
+<text x="32" y="38" font-family="Arial, sans-serif" font-size="22" font-weight="600" fill="#1a202c">侦察资源分配验证矩阵</text>
+<text x="32" y="60" font-family="Arial, sans-serif" font-size="13" fill="#4a5568">状态、主分配飞机、载荷和候选平台数量</text>
+<text x="32" y="54" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#4a5568">场景</text>
+<text x="320" y="54" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#4a5568">状态</text>
+<text x="475" y="54" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#4a5568">主任务飞机</text>
+<text x="660" y="54" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#4a5568">载荷</text>
+<text x="830" y="54" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#4a5568">候选数</text>
+<rect x="20" y="47" width="1060" height="48" fill="#edf2f7"/>
+<text x="32" y="72" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">VISIBLE + LOITER</text>
+<rect x="320" y="56" width="120" height="24" rx="4" fill="#2f855a"/>
+<text x="380" y="73" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff">ALLOCATED</text>
+<text x="475" y="72" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">C172-01</text>
+<text x="660" y="72" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">payload.wescam_mx15</text>
+<text x="830" y="72" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">5</text>
+<text x="32" y="130" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">INFRARED + LOITER</text>
+<rect x="320" y="114" width="120" height="24" rx="4" fill="#2f855a"/>
+<text x="380" y="131" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff">ALLOCATED</text>
+<text x="475" y="130" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">C172-01</text>
+<text x="660" y="130" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">payload.wescam_mx15</text>
+<text x="830" y="130" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">5</text>
+<rect x="20" y="163" width="1060" height="48" fill="#edf2f7"/>
+<text x="32" y="188" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">RADAR</text>
+<rect x="320" y="172" width="120" height="24" rx="4" fill="#2f855a"/>
+<text x="380" y="189" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff">ALLOCATED</text>
+<text x="475" y="188" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">SF50-01</text>
+<text x="660" y="188" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">payload.lynx_mmr</text>
+<text x="830" y="188" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">5</text>
+<text x="32" y="246" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">DEPENDENCY BLOCKED</text>
+<rect x="320" y="230" width="120" height="24" rx="4" fill="#c05621"/>
+<text x="380" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff">BLOCKED</text>
+<text x="475" y="246" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">—</text>
+<text x="660" y="246" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">—</text>
+<text x="830" y="246" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">0</text>
+<rect x="20" y="279" width="1060" height="48" fill="#edf2f7"/>
+<text x="32" y="304" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">RADAR WITHOUT PAYLOAD</text>
+<rect x="320" y="288" width="120" height="24" rx="4" fill="#c53030"/>
+<text x="380" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff">INFEASIBLE</text>
+<text x="475" y="304" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">—</text>
+<text x="660" y="304" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">—</text>
+<text x="830" y="304" font-family="Arial, sans-serif" font-size="14" fill="#1a202c">0</text>
+<text x="32" y="398" font-family="Arial, sans-serif" font-size="12" fill="#718096">结果由前端任务、聚合任务组和舰队快照共同计算</text>
+</svg>
+</div>
+<table>
+<thead><tr><th>场景</th><th>状态</th><th>主任务飞机</th><th>载荷</th><th>候选数</th><th>备用飞机</th><th>求解器</th><th>原因或排除信息</th></tr></thead>
+<tbody><tr><td>VISIBLE + LOITER</td><td class='status status-allocated'>ALLOCATED</td><td>C172-01</td><td>payload.wescam_mx15</td><td>5</td><td>9</td><td>ortools_cp_sat</td><td>MISSING_FLIGHT_CAPABILITY:LOITER</td></tr><tr><td>INFRARED + LOITER</td><td class='status status-allocated'>ALLOCATED</td><td>C172-01</td><td>payload.wescam_mx15</td><td>5</td><td>9</td><td>ortools_cp_sat</td><td>MISSING_FLIGHT_CAPABILITY:LOITER</td></tr><tr><td>RADAR</td><td class='status status-allocated'>ALLOCATED</td><td>SF50-01</td><td>payload.lynx_mmr</td><td>5</td><td>9</td><td>ortools_cp_sat</td><td>MISSING_PAYLOAD:RADAR</td></tr><tr><td>DEPENDENCY BLOCKED</td><td class='status status-blocked'>BLOCKED</td><td>—</td><td>—</td><td>0</td><td>0</td><td>—</td><td>UNRESOLVED_DEPENDENCY</td></tr><tr><td>RADAR WITHOUT PAYLOAD</td><td class='status status-infeasible'>INFEASIBLE</td><td>—</td><td>—</td><td>0</td><td>0</td><td>—</td><td>NO_FEASIBLE_AIRCRAFT</td></tr></tbody>
+</table>
+<div class="note">
+<div>C172 与 SF50 的飞行能力来自飞行手册参数整理后的仿真配置。</div>
+<div>MX-15 与 Lynx 的平台兼容关系属于虚拟载荷配置。</div>
+<div>当前验证范围是任务组分配、候选筛选和依赖阻塞，不包含真实航迹、通信带宽和飞控执行。</div>
+</div>
+</main>
+</body>
+</html>

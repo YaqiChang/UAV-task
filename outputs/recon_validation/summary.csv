@@ -1,0 +1,6 @@
+scenario_id,title,status,reason,primary_aircraft,primary_models,payloads,assigned_groups,unassigned_groups,candidate_count,rejection_count,rejection_reasons,reserve_count,solver_name,solver_status,objective_value,validation
+baseline_visible,VISIBLE + LOITER,ALLOCATED,,C172-01,C172,payload.wescam_mx15,G01,,5,5,MISSING_FLIGHT_CAPABILITY:LOITER,9,ortools_cp_sat,OPTIMAL,2600001.0,"{""all_groups_assigned_once"": true, ""dependency_constraints_satisfied"": true, ""candidate_constraints_applied"": true}"
+infrared_loiter,INFRARED + LOITER,ALLOCATED,,C172-01,C172,payload.wescam_mx15,G01,,5,5,MISSING_FLIGHT_CAPABILITY:LOITER,9,ortools_cp_sat,OPTIMAL,2600001.0,"{""all_groups_assigned_once"": true, ""dependency_constraints_satisfied"": true, ""candidate_constraints_applied"": true}"
+radar,RADAR,ALLOCATED,,SF50-01,SF50,payload.lynx_mmr,G01,,5,5,MISSING_PAYLOAD:RADAR,9,ortools_cp_sat,OPTIMAL,2600001.0,"{""all_groups_assigned_once"": true, ""dependency_constraints_satisfied"": true, ""candidate_constraints_applied"": true}"
+dependency_blocked,DEPENDENCY BLOCKED,BLOCKED,UNRESOLVED_DEPENDENCY,,,,,,0,0,,0,,,,{}
+radar_without_payload,RADAR WITHOUT PAYLOAD,INFEASIBLE,NO_FEASIBLE_AIRCRAFT,,,,,,0,10,MISSING_PAYLOAD:RADAR,0,,,,{}

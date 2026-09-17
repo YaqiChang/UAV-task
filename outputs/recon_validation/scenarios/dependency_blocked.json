@@ -1,0 +1,61 @@
+{
+  "mission_id": "M001",
+  "allocation_version": 1,
+  "plan_version": 1,
+  "aggregation_version": 1,
+  "context_version": 3,
+  "fleet_snapshot_version": 7,
+  "groups": [
+    {
+      "group_id": "G01",
+      "member_task_ids": [
+        "T01",
+        "T02"
+      ],
+      "group_type": "AREA_OBSERVATION",
+      "target_area_ids": [
+        "AREA-B",
+        "AREA-C"
+      ],
+      "combined_priority": 2,
+      "estimated_workload_sec": 180,
+      "required_payloads": [
+        "VISIBLE"
+      ],
+      "required_capabilities": [
+        "LOITER"
+      ],
+      "time_window": {
+        "start": 0,
+        "end": null
+      },
+      "constraints": {
+        "min_altitude_m": 500.0,
+        "max_altitude_m": 1000.0
+      },
+      "depends_on_groups": [],
+      "external_dependencies": [
+        "T00"
+      ],
+      "estimated_transit_time_sec": 0
+    }
+  ],
+  "dependency_validation": {
+    "valid": false,
+    "completed_task_ids": [],
+    "blockers": [
+      {
+        "group_id": "G01",
+        "dependency": "T00",
+        "reason": "UNRESOLVED_TASK_DEPENDENCY"
+      }
+    ]
+  },
+  "warnings": [],
+  "conflicts": [],
+  "status": "BLOCKED",
+  "reason": "UNRESOLVED_DEPENDENCY",
+  "assignments": [],
+  "reserve_aircraft": [],
+  "candidate_summary": {}
+}

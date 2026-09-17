@@ -1,0 +1,96 @@
+{
+  "mission_id": "M001",
+  "allocation_version": 1,
+  "plan_version": 1,
+  "aggregation_version": 1,
+  "context_version": 3,
+  "fleet_snapshot_version": 7,
+  "groups": [
+    {
+      "group_id": "G01",
+      "member_task_ids": [
+        "T01",
+        "T02"
+      ],
+      "group_type": "AREA_OBSERVATION",
+      "target_area_ids": [
+        "AREA-B",
+        "AREA-C"
+      ],
+      "combined_priority": 2,
+      "estimated_workload_sec": 180,
+      "required_payloads": [
+        "RADAR"
+      ],
+      "required_capabilities": [],
+      "time_window": {
+        "start": 0,
+        "end": null
+      },
+      "constraints": {
+        "min_altitude_m": 500.0,
+        "max_altitude_m": 1000.0
+      },
+      "depends_on_groups": [],
+      "external_dependencies": [
+        "T00"
+      ],
+      "estimated_transit_time_sec": 0
+    }
+  ],
+  "dependency_validation": {
+    "valid": true,
+    "completed_task_ids": [
+      "T00"
+    ],
+    "blockers": []
+  },
+  "warnings": [],
+  "conflicts": [],
+  "candidate_summary": {
+    "candidates": {
+      "G01": []
+    },
+    "rejected": {
+      "G01": {
+        "C172-01": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "C172-02": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "C172-03": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "C172-04": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "C172-05": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "SF50-01": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "SF50-02": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "SF50-03": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "SF50-04": [
+          "MISSING_PAYLOAD:RADAR"
+        ],
+        "SF50-05": [
+          "MISSING_PAYLOAD:RADAR"
+        ]
+      }
+    }
+  },
+  "status": "INFEASIBLE",
+  "reason": "NO_FEASIBLE_AIRCRAFT",
+  "infeasible_groups": [
+    "G01"
+  ],
+  "assignments": [],
+  "reserve_aircraft": []
+}
