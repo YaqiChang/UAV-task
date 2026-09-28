@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YaqiChang/UAV-task/blob/main/mission_planner/response_v1.schema.json",
+  "title": "Task aggregation and aircraft allocation result v1",
+  "type": "object",
+  "required": ["schema_version", "request_id", "mission_id", "allocation_id", "allocation_version", "plan_version", "context_version", "fleet_snapshot_version", "status", "reason", "task_groups", "assignments", "reserve_aircraft", "unassigned_task_ids", "candidate_summary", "aggregation_trace", "warnings", "conflicts", "solver", "validation"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "request_id": {"type": ["string", "null"]},
+    "mission_id": {"type": ["string", "null"]},
+    "allocation_id": {"type": "string"},
+    "allocation_version": {"type": "integer"},
+    "plan_version": {"type": ["integer", "null"]},
+    "context_version": {"type": ["integer", "null"]},
+    "fleet_snapshot_version": {"type": ["integer", "null"]},
+    "status": {"enum": ["ALLOCATED", "PARTIALLY_ALLOCATED", "INFEASIBLE", "BLOCKED", "ERROR"]},
+    "reason": {"type": ["string", "null"]},
+    "task_groups": {"type": "array", "items": {"$ref": "#/$defs/group"}},
+    "assignments": {"type": "array", "items": {"$ref": "#/$defs/assignment"}},
+    "reserve_aircraft": {"type": "array", "items": {"type": "object"}},
+    "unassigned_task_ids": {"type": "array", "items": {"type": "string"}},
+    "candidate_summary": {"type": "object"},
+    "aggregation_trace": {"type": "array", "items": {"type": "object"}},
+    "warnings": {"type": "array", "items": {"type": "object"}},
+    "conflicts": {"type": "array", "items": {"type": "object"}},
+    "solver": {
+      "type": "object", "required": ["solver_name", "solver_status", "optimal", "unassigned_group_ids"],
+      "properties": {
+        "solver_name": {"type": "string"}, "solver_status": {"type": "string"},
+        "optimal": {"type": "boolean"},
+        "unassigned_group_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "validation": {"type": "object", "required": ["all_input_tasks_accounted_for", "every_group_assigned_at_most_once", "dependencies_satisfied", "payload_constraints_satisfied", "flight_constraints_satisfied", "endurance_constraints_satisfied"]}
+  },
+  "$defs": {
+    "group": {
+      "type": "object", "required": ["group_id", "member_task_ids", "group_type", "target_area_ids", "required_payload_ids", "required_capabilities", "estimated_transit_time_sec", "estimated_service_time_sec", "estimated_total_workload_sec", "aggregation_reason"],
+      "properties": {
+        "group_id": {"type": "string"}, "member_task_ids": {"type": "array", "items": {"type": "string"}},
+        "group_type": {"type": "string"}, "target_area_ids": {"type": "array", "items": {"type": "string"}},
+        "required_payload_ids": {"type": "array", "items": {"type": "string"}},
+        "required_capabilities": {"type": "array", "items": {"type": "string"}},
+        "estimated_transit_time_sec": {"type": ["integer", "null"]},
+        "estimated_service_time_sec": {"type": "integer"},
+        "estimated_total_workload_sec": {"type": ["integer", "null"]},
+        "aggregation_reason": {"type": "string"}
+      }
+    },
+    "assignment": {
+      "type": "object", "required": ["aircraft_id", "model_id", "role", "group_ids", "task_sequence", "selected_payload_ids", "estimated_transit_time_sec", "estimated_service_time_sec", "estimated_total_workload_sec", "estimated_remaining_endurance_sec", "assignment_reason"],
+      "properties": {
+        "aircraft_id": {"type": "string"}, "model_id": {"type": "string"},
+        "xplane_instance_id": {"type": ["string", "null"]}, "role": {"const": "PRIMARY"},
+        "group_ids": {"type": "array", "items": {"type": "string"}},
+        "task_sequence": {"type": "array", "items": {"type": "string"}},
+        "selected_payload_ids": {"type": "array", "items": {"type": "string"}},
+        "estimated_transit_time_sec": {"type": "integer"},
+        "estimated_service_time_sec": {"type": "integer"},
+        "estimated_total_workload_sec": {"type": "integer"},
+        "estimated_remaining_endurance_sec": {"type": "integer"},
+        "assignment_reason": {"type": "string"}
+      }
+    }
+  }
+}

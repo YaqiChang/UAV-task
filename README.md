@@ -1,5 +1,9 @@
 # UAV Task
 
+## 协作接口 v1
+
+联调使用单一 Python 入口 `mission_planner.aggregate_and_allocate(request)`。输入示例、JSON Schema、运行说明和测试均位于 [mission_planner/COLLABORATION_V1.md](mission_planner/COLLABORATION_V1.md) 所在目录。该目录可作为独立代码目录提供给协作者，运行时只需安装该目录的 `requirements-collaboration.txt`。以下章节记录此前的分配接口和旧示例，其 `aggregation_output`、载荷别名及仿真能力行为不代表协作接口 v1。
+
 该仓库是独立的无人机任务聚合与资源分配项目。它承接前端任务规划输出，将任务组分配给 C172 和 SF50 两类飞行平台，并输出供航迹规划模块使用的飞机任务包。
 
 当前实现完成以下功能：
@@ -52,7 +56,7 @@ python -m mission_planner.mission_cli \
   --output outputs/recon_allocation.json
 ```
 
-示例结果中，G01 被分配给一架 C172，其余飞机保留为 `AVAILABLE_RESERVE`。SF50 在该示例中因未配置 `LOITER` 仿真能力而被筛除。
+该旧示例将 G01 分配给一架 C172，其余飞机返回备用状态。协作接口 v1 从实时快照读取 SF50 的 `LOITER` 能力。
 
 `T00` 通过 `completed_task_ids` 标记为已完成。删除该字段后，G01 将返回 `BLOCKED`，用于验证前端任务依赖没有被聚合过程丢失。
 
