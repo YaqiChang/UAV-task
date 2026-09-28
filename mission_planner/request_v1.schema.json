@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YaqiChang/UAV-task/blob/main/mission_planner/request_v1.schema.json",
+  "title": "Task aggregation and aircraft allocation request v1",
+  "type": "object",
+  "required": ["schema_version", "request_id", "mission_id", "plan_version", "context_version", "requested_at", "scenario_context", "tasks", "fleet_snapshot"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "request_id": {"$ref": "#/$defs/identifier"},
+    "mission_id": {"$ref": "#/$defs/identifier"},
+    "plan_version": {"type": "integer", "minimum": 1},
+    "context_version": {"type": "integer", "minimum": 1},
+    "requested_at": {"type": "string", "format": "date-time"},
+    "scenario_context": {
+      "type": "object", "required": ["map_reference_position"],
+      "properties": {"map_reference_position": {"$ref": "#/$defs/position"}}
+    },
+    "tasks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/task"}},
+    "fleet_snapshot": {
+      "type": "object", "required": ["fleet_snapshot_version", "aircraft"],
+      "properties": {
+        "fleet_snapshot_version": {"type": "integer", "minimum": 1},
+        "aircraft": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/aircraft"}}
+      }
+    },
+    "completed_task_ids": {"type": "array", "items": {"$ref": "#/$defs/identifier"}},
+    "parameters": {
+      "type": "object", "properties": {
+        "aggregation_threshold": {"type": "number", "minimum": 0, "maximum": 1},
+        "max_bundle_distance_m": {"type": "number", "exclusiveMinimum": 0},
+        "max_tasks_per_group": {"type": "integer", "minimum": 1},
+        "solver_time_limit_sec": {"type": "number", "exclusiveMinimum": 0},
+        "endurance_reserve_ratio": {"type": "number", "minimum": 0, "exclusiveMaximum": 1}
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1},
+    "position": {
+      "type": "object", "required": ["latitude", "longitude", "altitude_m", "altitude_reference"],
+      "properties": {
+        "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+        "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+        "altitude_m": {"type": "number"}, "altitude_reference": {"const": "MSL"}
+      }
+    },
+    "window": {
+      "type": "object", "properties": {
+        "start_sec": {"type": ["integer", "null"], "minimum": 0},
+        "end_sec": {"type": ["integer", "null"], "minimum": 1}
+      }
+    },
+    "task": {
+      "type": "object", "required": ["task_id", "task_type", "target_area_id", "target_position", "duration_sec", "priority", "required_payload_ids", "required_capabilities", "depends_on"],
+      "properties": {
+        "task_id": {"$ref": "#/$defs/identifier"},
+        "task_type": {"enum": ["OBSERVE", "SEARCH", "TRACK", "RELAY", "SURVEY"]},
+        "target_area_id": {"$ref": "#/$defs/identifier"},
+        "target_position": {"$ref": "#/$defs/position"},
+        "duration_sec": {"type": "integer", "minimum": 1},
+        "priority": {"type": "integer", "minimum": 1},
+        "time_window": {"$ref": "#/$defs/window"},
+        "required_payload_ids": {"type": "array", "items": {"type": "string"}},
+        "required_capabilities": {"type": "array", "items": {"type": "string"}},
+        "depends_on": {"type": "array", "items": {"$ref": "#/$defs/identifier"}},
+        "merge_policy": {"enum": ["NEVER", "BUNDLE_IF_COMPATIBLE", "DEDUPLICATE"]},
+        "constraints": {
+          "type": "object", "properties": {
+            "min_altitude_m": {"type": "number"}, "max_altitude_m": {"type": "number"}
+          }
+        }
+      }
+    },
+    "aircraft": {
+      "type": "object", "required": ["aircraft_id", "model_id", "available", "position", "installed_payload_ids", "available_payload_ids", "flight_capabilities", "remaining_endurance_sec", "aircraft_profile"],
+      "properties": {
+        "aircraft_id": {"$ref": "#/$defs/identifier"},
+        "model_id": {"$ref": "#/$defs/identifier"},
+        "xplane_instance_id": {"type": ["string", "null"]},
+        "available": {"type": "boolean"},
+        "position": {"$ref": "#/$defs/position"},
+        "installed_payload_ids": {"type": "array", "items": {"type": "string"}},
+        "available_payload_ids": {"type": "array", "items": {"type": "string"}},
+        "flight_capabilities": {"type": "array", "items": {"type": "string"}},
+        "remaining_endurance_sec": {"type": "integer", "minimum": 0},
+        "aircraft_profile": {
+          "type": "object", "required": ["cruise_speed_mps", "service_ceiling_m", "max_work_sec"],
+          "properties": {
+            "cruise_speed_mps": {"type": "number", "exclusiveMinimum": 0},
+            "service_ceiling_m": {"type": "number"},
+            "max_work_sec": {"type": "integer", "minimum": 1}
+          }
+        }
+      }
+    }
+  }
+}

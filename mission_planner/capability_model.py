@@ -28,6 +28,12 @@ PAYLOAD_ALIAS_CAPABILITIES: Dict[str, Set[str]] = {
 
 
 PAYLOAD_CATALOG: Dict[str, Dict[str, Any]] = {
+    "PAYLOAD.STORMCASTER_E": {
+        "payload_id": "payload.stormcaster_e",
+        "payload_family": "EO",
+        "capabilities": ["EO_DAYLIGHT", "LOW_LIGHT", "VIDEO_TRACKING"],
+        "value_origin": "PROJECT_KNOWLEDGE_BASE_2026_09_22",
+    },
     "PAYLOAD.WESCAM_MX15": {
         "payload_id": "payload.wescam_mx15",
         "payload_family": "EO_IR",
@@ -83,6 +89,7 @@ PLATFORM_PROFILES: Dict[str, Dict[str, Any]] = {
         "fuel_burn_reference": 315.0,
         "performance_source": "SF50 Pilot Operating Manual",
         "simulation_flight_capabilities": [
+            "LOITER",
             "FAST_TRANSIT",
             "HIGH_ALTITUDE_OPERATION",
             "LONG_RANGE_RECON",
